@@ -1,5 +1,6 @@
 played = []
-response = []
+temp1 = []
+temp2 = []
 allowed = ['r', 'p', 's']
 win = []
 bot_plays, user_plays = 'r', 'r'
@@ -30,21 +31,40 @@ def bot_play(dummy=0, vals=1):
           if played[i] == 'r': r += 1 * value
           if played[i] == 'p': p += 1 * value
           if played[i] == 's': s += 1 * value
-        elif win[i] == 0:
-          if played[i] == 'r': r -= 1 * value
-          if played[i] == 'p': p -= 1 * value
-          if played[i] == 's': s -= 1 * value
+        if len(played) > 4:
+          temp1.clear()
+          temp2.clear()
+          temp1.insert(0, played[-1])
+          temp1.insert(0, played[-2])
+          temp2.insert(0, played[-3])
+          temp2.insert(0, played[-4])
+          if temp1 == temp2:
+            print('trend recognized')
+            print(temp1,'\n',temp2)
+            if played[i] == 'r': r += 2 * value
+            if played[i] == 'p': p += 2 * value
+            if played[i] == 's': s += 2 * value
+          
+        if win[i] == 0:
+          if played[i] == 'r': r -= 1
+          if played[i] == 'p': p -= 1
+          if played[i] == 's': s -= 1
+          '''
         elif win[i] == 2:
           if played[i] == 'r': r -= 0.1 * value
           if played[i] == 'p': p -= 0.1 * value
           if played[i] == 's': s -= 0.1 * value
+          '''
         if vals:
           print('Value - ', round(value, 3), '| Values for r/p/s -', round(r, 3), round(p, 3), round(s, 3))
-    if max(r,p,s) == r: bot_plays = 'r'
-    if max(r,p,s) == p: bot_plays = 'p'
-    if max(r,p,s) == s: bot_plays = 's'
+    if r + p + s != 0:
+      if max(r,p,s) == r: bot_plays = 'p'
+      if max(r,p,s) == p: bot_plays = 's'
+      if max(r,p,s) == s: bot_plays = 'r'
+    else:
+      bot_plays = 'p'
     print('Bot played -->', bot_plays)
-        
+    response.append(bot_plays)
 
 
     return bot_plays
@@ -59,11 +79,7 @@ def check_win():
     else:
       print('lost')
       win.append(0)
-        
-for i in range(2):
-    user_play()
-    bot_play(1)
-    check_win()
+    
 while True:
     user_play()
     bot_plays = bot_play(0)
